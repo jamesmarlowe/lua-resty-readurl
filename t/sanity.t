@@ -129,4 +129,4 @@ GET /t
 --- response_body
 /s-failedExpected the end but found T_OBJ_END at character 20
 --- no_error_log
-[error]
+[crit]
