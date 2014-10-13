@@ -31,7 +31,7 @@ function _M.capture(url, url_arguments, decode, log_table)
     if ok and response then
         if not decode then
             local message = url.."-success"
-            ngx.log(log_table['success_log_level'], message..response)
+            ngx.log(log_table['success_log_level'], message)
             if log_table['counter_dict'] then
                 local val = log_table['counter_dict']:incr(message, 1)
                 if not val then log_table['counter_dict']:add(message, 1) end
@@ -41,7 +41,7 @@ function _M.capture(url, url_arguments, decode, log_table)
             local ok, result = pcall(cjson.decode, response.body)
             if ok and result then
                 local message = url.."-success"
-                ngx.log(log_table['success_log_level'], message..result)
+                ngx.log(log_table['success_log_level'], message)
                 if log_table['counter_dict'] then
                     local val = log_table['counter_dict']:incr(message, 1)
                     if not val then log_table['counter_dict']:add(message, 1) end
