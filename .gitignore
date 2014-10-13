@@ -1,0 +1,5 @@
+t/servroot/
+reindex
+*.t_
+tags
+*.luac
