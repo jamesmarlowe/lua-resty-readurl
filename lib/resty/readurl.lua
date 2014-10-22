@@ -67,12 +67,12 @@ function _M.capture(url, url_arguments, decode, log_table)
                 return result
             else
                 local message = url.."-failed"
-                ngx.log(log_table['failure_log_level'], message..result)
+                ngx.log(log_table['failure_log_level'], message..":"..response.status)
                 if log_table['counter_dict'] then
                     local val = log_table['counter_dict']:incr(message, 1)
                     if not val then log_table['counter_dict']:add(message, 1) end
                 end
-                return nil, message..result
+                return nil, message..":"..response.status
             end
         end
     else
