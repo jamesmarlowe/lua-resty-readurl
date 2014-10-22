@@ -29,7 +29,7 @@ function _M.capture(url, url_arguments, decode, log_table)
     end
     
     if ok and response then
-        if not decode then
+        if not decode and response.body then
             local message = url.."-success"
             ngx.log(log_table['success_log_level'], message)
             if log_table['counter_dict'] then
@@ -37,9 +37,27 @@ function _M.capture(url, url_arguments, decode, log_table)
                 if not val then log_table['counter_dict']:add(message, 1) end
             end
             return response.body
-        else
+        elseif response.body then
             local ok, result = pcall(cjson.decode, response.body)
             if ok and result then
+                local message = url.."-success"
+                ngx.log(log_table['success_log_level'], message)
+                if log_table['counter_dict'] then
+                    local val = log_table['counter_dict']:incr(message, 1)
+                    if not val then log_table['counter_dict']:add(message, 1) end
+                end
+                return result
+            else
+                local message = url.."-failed"
+                ngx.log(log_table['failure_log_level'], message..result)
+                if log_table['counter_dict'] then
+                    local val = log_table['counter_dict']:incr(message, 1)
+                    if not val then log_table['counter_dict']:add(message, 1) end
+                end
+                return nil, message..result
+            end
+        else
+            if 199 < response.status and 400 > response.status then
                 local message = url.."-success"
                 ngx.log(log_table['success_log_level'], message)
                 if log_table['counter_dict'] then
@@ -59,12 +77,12 @@ function _M.capture(url, url_arguments, decode, log_table)
         end
     else
         local message = url.."-failed"
-        ngx.log(log_table['failure_log_level'], message..response)
+        ngx.log(log_table['failure_log_level'], message)
         if log_table['counter_dict'] then
             local val = log_table['counter_dict']:incr(message, 1)
             if not val then log_table['counter_dict']:add(message, 1) end
         end
-        return nil, message..response
+        return nil, message
     end
 end
 
